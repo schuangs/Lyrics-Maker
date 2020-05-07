@@ -1,0 +1,3 @@
+1. ***lyrics.cpp*** :   Automatically add time shaft points in your .lrc file. Compile and run ***lyrics.cpp***, enter the .lrc file(with no time shaft points) path. Then at the begining of each line of lyrics, just press enter. 
+2. ***play.cpp*** :   Automatically display lyrics.  Compile and run ***play.cpp***, enter the .lrc file(with time shaft) path. Then lyrics will be displayed in sequence at right time at console.
+3. An example .lrc file is added. It's a song from *Forever Changes* by *Love*.
