@@ -6,48 +6,40 @@
 # include <chrono>
 # include <vector>
 # include <sstream>
-# include <windows.h>
+
+# include "../../include/time.hpp"
 
 using namespace std;
 
-using my_clock = std::chrono::steady_clock;
-using time_unit = std::chrono::milliseconds;
-using time_point_t = std::chrono::time_point<my_clock, time_unit>;
 
-// Convert from time shaft format to number of milliseconds
-unsigned toMillisecond(const string& s) {
-    string new_s = s.substr(0, s.size()-1);
-    string m = new_s.substr(1,2);
-    int n = 0, tot = 0;
-    stringstream ss;
-    ss << m;
-    ss >> n;
-    tot += n*60*1000;
-    m = new_s.substr(4, 2);
-    ss.clear();
-    ss << m;
-    ss >> n;
-    tot += n*1000;
-    m = new_s.substr(7);
-    ss.clear();
-    ss << m;
-    ss >> n;
-    tot += n;
-    return tot;
-}
 
-int main() {
-    // Chinese language support
-    SetConsoleOutputCP(65001);
-    cout << "Enter the .lrc file (with time rolls):" << endl;
+int main(int argc, char **argv) {
+
+    /* local variables */
     string file_name, line;
-    cin >> file_name;
-    getline(cin, line);
     vector<unsigned> times;
     vector<string> lyrics;
+    unsigned index = 0, offset = 0;
+
+    /* offset may be passed through main */
+    if (argc >= 3)
+    {
+        offset = string2unsigned(std::string(argv[2]));
+    }
+    else if (argc < 2) 
+    {
+        cerr << "No file input" << endl;
+        return -1;
+    } else
+    {
+        /* file name is passed through console as main argument as well */
+        file_name = argv[1];
+    }
+    
+    getline(cin, line);
     ifstream file(file_name);
 
-    // Convert from .lrc format to lyrics and its time
+    /* Convert from .lrc format to lyrics and its time */
     cout << "Format converting..." << endl;
     while (getline(file, line)) {
         if (isdigit(line[1])) {
@@ -58,14 +50,13 @@ int main() {
     }
     file.close();
 
-    // Ready to play
+    /* Ready to play */
     cout << "Press enter to start play:" << flush;
     getline(cin, line);
     time_point_t start = chrono::time_point_cast<time_unit>(my_clock::now());
-    unsigned index = 0;
     while (index < times.size()) {
         time_point_t now = chrono::time_point_cast<time_unit>(my_clock::now());
-        if ((now-start).count() >= times[index])
+        if ((now-start).count() >= times[index] + offset)
             cout << lyrics[index++] << endl;
     }
     return 0;
